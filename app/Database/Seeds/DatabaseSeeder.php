@@ -10,5 +10,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(CategorySeeder::class);
         $this->call(ProductSeeder::class);
+        
+        echo "Database seeded successfully!\n";
+        echo "- Categories: " . $this->db->table('categories')->countAll() . " records\n";
+        echo "- Products: " . $this->db->table('products')->countAll() . " records\n";
     }
 }

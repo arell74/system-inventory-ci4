@@ -21,21 +21,10 @@ use Psr\Log\LoggerInterface;
  */
 abstract class BaseController extends Controller
 {
-    /**
-     * Instance of the main Request object.
-     *
-     * @var CLIRequest|IncomingRequest
-     */
-    protected $request;
 
-    /**
-     * An array of helpers to be loaded automatically upon
-     * class instantiation. These helpers will be available
-     * to all other controllers that extend BaseController.
-     *
-     * @var list<string>
-     */
-    protected $helpers = [];
+    protected $request;
+    protected $helpers = ['url', 'form', 'html', 'inventory'];
+    protected $data = [];
 
     /**
      * Be sure to declare properties for any property fetch you initialized.
@@ -51,8 +40,38 @@ abstract class BaseController extends Controller
         // Do Not Edit This Line
         parent::initController($request, $response, $logger);
 
-        // Preload any models, libraries, etc, here.
+        // Global data yang bisa diakses di semua view
+        $this->data = [
+            'title' => 'Inventory System',
+            'page_title' => '',
+            'page_subtitle' => '',
+        ];
+        
+    }
+    
+    //set page data
+    protected function setPageData($title, $subtitle = '')
+    {
+        $this->data['title'] = $title . ' | Inventory System';
+        $this->data['page_title'] = $title;
+        $this->data['page_subtitle'] = $subtitle;
+    }
 
-        // E.g.: $this->session = service('session');
+    //set Flash Message
+    protected function setFlash($type, $message)
+    {
+        session()->setFlashdata($type, $message);
+    }
+
+    //Check if request is AJAX
+    protected function isAjax()
+    {
+        return $this->request->isAJAX();
+    }
+
+    //Return JSON response
+    protected function jsonResponse($data, $code = 200)
+    {
+        return $this->response->setStatusCode($code)->setJSON($data);
     }
 }
