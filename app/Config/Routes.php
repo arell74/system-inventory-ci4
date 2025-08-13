@@ -22,7 +22,7 @@ $routes->group('categories', function($routes) {
 
 //product
 $routes->group('products', function($routes) {
-    $routes->get('/', 'CategoryController::index');
+    $routes->get('/', 'ProductController::index');
     $routes->get('create', 'ProductController::create');
     $routes->get('show/(:num)', 'ProductController::show/$1');
     $routes->post('store', 'ProductController::store');

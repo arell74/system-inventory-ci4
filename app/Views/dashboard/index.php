@@ -22,7 +22,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-6 col-lg-3 col-md-6">
         <div class="card inventory-card">
             <div class="card-body px-4 py-4-5">
@@ -41,7 +41,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-6 col-lg-3 col-md-6">
         <div class="card inventory-card">
             <div class="card-body px-4 py-4-5">
@@ -60,7 +60,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-6 col-lg-3 col-md-6">
         <div class="card inventory-card <?= $low_stock_count > 0 ? 'low-stock alert-stock' : '' ?>">
             <div class="card-body px-4 py-4-5">
@@ -163,15 +163,15 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5><i class="bi bi-graph-up"></i> Pergerakan Stok 6 Bulan Terakhir</h5>
                 <div class="dropdown">
-                    <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" 
-                            data-bs-toggle="dropdown">
+                    <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button"
+                        data-bs-toggle="dropdown">
                         <i class="bi bi-gear"></i> Options
                     </button>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="#" onclick="exportChart('movements')">
-                            <i class="bi bi-download"></i> Export Chart</a></li>
+                                <i class="bi bi-download"></i> Export Chart</a></li>
                         <li><a class="dropdown-item" href="<?= base_url('/reports/movements') ?>">
-                            <i class="bi bi-file-earmark-text"></i> Detail Report</a></li>
+                                <i class="bi bi-file-earmark-text"></i> Detail Report</a></li>
                     </ul>
                 </div>
             </div>
@@ -180,7 +180,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Stock Status Pie Chart -->
     <div class="col-12 col-xl-4 mb-4">
         <div class="card">
@@ -243,27 +243,27 @@
                             </thead>
                             <tbody>
                                 <?php foreach ($recent_movements as $movement): ?>
-                                <tr>
-                                    <td>
-                                        <small class="text-muted">
-                                            <?= time_ago($movement['created_at']) ?>
-                                        </small>
-                                    </td>
-                                    <td>
-                                        <div>
-                                            <strong><?= esc($movement['product_name']) ?></strong>
-                                            <small class="d-block text-muted"><?= $movement['product_sku'] ?></small>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <?= format_movement_badge($movement['type']) ?>
-                                    </td>
-                                    <td>
-                                        <strong class="<?= $movement['type'] == 'IN' ? 'text-success' : 'text-danger' ?>">
-                                            <?= $movement['type'] == 'IN' ? '+' : '-' ?><?= number_format($movement['quantity']) ?>
-                                        </strong>
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td>
+                                            <small class="text-muted">
+                                                <?= time_ago($movement['created_at']) ?>
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <strong><?= esc($movement['product_name']) ?></strong>
+                                                <small class="d-block text-muted"><?= $movement['product_sku'] ?></small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <?= format_movement_badge($movement['type']) ?>
+                                        </td>
+                                        <td>
+                                            <strong class="<?= $movement['type'] == 'IN' ? 'text-success' : 'text-danger' ?>">
+                                                <?= $movement['type'] == 'IN' ? '+' : '-' ?><?= number_format($movement['quantity']) ?>
+                                            </strong>
+                                        </td>
+                                    </tr>
                                 <?php endforeach ?>
                             </tbody>
                         </table>
@@ -277,7 +277,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Low Stock Products -->
     <div class="col-12 col-xl-6 mb-4">
         <div class="card">
@@ -301,37 +301,37 @@
                             </thead>
                             <tbody>
                                 <?php foreach ($low_stock_products as $product): ?>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="avatar avatar-sm me-3">
-                                                <div class="avatar-content bg-warning text-white">
-                                                    <i class="bi bi-box"></i>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar avatar-sm me-3">
+                                                    <div class="avatar-content bg-warning text-white">
+                                                        <i class="bi bi-box"></i>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <strong><?= esc($product['name']) ?></strong>
+                                                    <small class="d-block text-muted"><?= $product['category_name'] ?></small>
                                                 </div>
                                             </div>
-                                            <div>
-                                                <strong><?= esc($product['name']) ?></strong>
-                                                <small class="d-block text-muted"><?= $product['category_name'] ?></small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <strong class="<?= $product['current_stock'] == 0 ? 'text-danger' : 'text-warning' ?>">
-                                            <?= number_format($product['current_stock']) ?>
-                                        </strong>
-                                    </td>
-                                    <td>
-                                        <span class="text-muted"><?= number_format($product['min_stock']) ?></span>
-                                    </td>
-                                    <td>
-                                        <?= format_stock_badge($product['current_stock'], $product['min_stock']) ?>
-                                    </td>
-                                </tr>
+                                        </td>
+                                        <td>
+                                            <strong class="<?= $product['current_stock'] == 0 ? 'text-danger' : 'text-warning' ?>">
+                                                <?= number_format($product['current_stock']) ?>
+                                            </strong>
+                                        </td>
+                                        <td>
+                                            <span class="text-muted"><?= number_format($product['min_stock']) ?></span>
+                                        </td>
+                                        <td>
+                                            <?= format_stock_badge($product['current_stock'], $product['min_stock']) ?>
+                                        </td>
+                                    </tr>
                                 <?php endforeach ?>
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <div class="mt-3">
                         <div class="alert alert-warning">
                             <i class="bi bi-info-circle me-2"></i>
@@ -365,29 +365,30 @@
                 <?php if (!empty($top_products)): ?>
                     <div class="row">
                         <?php foreach ($top_products as $index => $product): ?>
-                        <div class="col-12 col-md-6 col-lg-4 mb-3">
-                            <div class="card border-0 bg-light">
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center">
-                                        <div class="rank-badge me-3">
-                                            <span class="badge bg-<?= $index == 0 ? 'warning' : ($index == 1 ? 'secondary' : 'dark') ?> fs-6">
-                                                #<?= $index + 1 ?>
-                                            </span>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-1"><?= esc($product['name']) ?></h6>
-                                            <small class="text-muted"><?= $product['category_name'] ?></small>
-                                            <div class="mt-2">
-                                                <div class="row">
-                                                    <div class="col-6">
-                                                        <small class="text-muted">Stok:</small>
-                                                        <strong class="d-block"><?= number_format($product['current_stock']) ?></strong>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <small class="text-muted">Nilai:</small>
-                                                        <strong class="d-block text-success">
-                                                            <?= format_currency($product['total_value']) ?>
-                                                        </strong>
+                            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                                <div class="card border-0 bg-light">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center">
+                                            <div class="rank-badge me-3">
+                                                <span class="badge bg-<?= $index == 0 ? 'warning' : ($index == 1 ? 'secondary' : 'dark') ?> fs-6">
+                                                    #<?= $index + 1 ?>
+                                                </span>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-1"><?= esc($product['name']) ?></h6>
+                                                <small class="text-muted"><?= $product['category_name'] ?></small>
+                                                <div class="mt-2">
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <small class="text-muted">Stok:</small>
+                                                            <strong class="d-block"><?= number_format($product['current_stock']) ?></strong>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <small class="text-muted">Nilai:</small>
+                                                            <strong class="d-block text-success">
+                                                                <?= format_currency($product['total_value']) ?>
+                                                            </strong>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -395,7 +396,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         <?php endforeach ?>
                     </div>
                 <?php else: ?>
@@ -413,239 +413,245 @@
 
 <?= $this->section('scripts') ?>
 <script>
-$(document).ready(function() {
-    // Stock Movement Chart
-    const movementCtx = document.getElementById('stockMovementChart').getContext('2d');
-    const stockMovementChart = new Chart(movementCtx, {
-        type: 'line',
-        data: {
-            labels: <?= json_encode($chart_data['monthly_movements']['labels']) ?>,
-            datasets: [{
-                label: 'Barang Masuk',
-                data: <?= json_encode($chart_data['monthly_movements']['stock_in']) ?>,
-                borderColor: '#198754',
-                backgroundColor: 'rgba(25, 135, 84, 0.1)',
-                tension: 0.4,
-                fill: true
-            }, {
-                label: 'Barang Keluar',
-                data: <?= json_encode($chart_data['monthly_movements']['stock_out']) ?>,
-                borderColor: '#dc3545',
-                backgroundColor: 'rgba(220, 53, 69, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: false
-                },
-                legend: {
-                    position: 'top',
-                }
+    $(document).ready(function() {
+        // Stock Movement Chart
+        const movementCtx = document.getElementById('stockMovementChart').getContext('2d');
+        const stockMovementChart = new Chart(movementCtx, {
+            type: 'line',
+            data: {
+                labels: <?= json_encode($chart_data['monthly_movements']['labels']) ?>,
+                datasets: [{
+                    label: 'Barang Masuk',
+                    data: <?= json_encode($chart_data['monthly_movements']['stock_in']) ?>,
+                    borderColor: '#198754',
+                    backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Barang Keluar',
+                    data: <?= json_encode($chart_data['monthly_movements']['stock_out']) ?>,
+                    borderColor: '#dc3545',
+                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return value.toLocaleString();
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: false
+                    },
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString();
+                            }
                         }
                     }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
                 }
-            },
-            interaction: {
-                intersect: false,
-                mode: 'index'
-            }
-        }
-    });
-
-    // Stock Status Pie Chart
-    const statusCtx = document.getElementById('stockStatusChart').getContext('2d');
-    const stockStatusChart = new Chart(statusCtx, {
-        type: 'doughnut',
-        data: {
-            labels: <?= json_encode($chart_data['stock_status_pie']['labels']) ?>,
-            datasets: [{
-                data: <?= json_encode($chart_data['stock_status_pie']['data']) ?>,
-                backgroundColor: <?= json_encode($chart_data['stock_status_pie']['colors']) ?>,
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            cutout: '70%'
-        }
-    });
-
-    // Real-time updates (every 30 seconds)
-    setInterval(function() {
-        updateDashboardStats();
-    }, 30000);
-
-    function updateDashboardStats() {
-        $.ajax({
-            url: '<?= base_url('/api/dashboard/stats') ?>',
-            type: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                if (data.status) {
-                    $('#total-products').text(data.stats.total_products.toLocaleString());
-                    // Update other stats as needed
-                }
-            },
-            error: function() {
-                console.log('Failed to update dashboard stats');
             }
         });
-    }
 
-    // Export chart function
-    window.exportChart = function(type) {
-        let chart, filename;
-        
-        if (type === 'movements') {
-            chart = stockMovementChart;
-            filename = 'stock-movements-chart.png';
-        } else if (type === 'status') {
-            chart = stockStatusChart;
-            filename = 'stock-status-chart.png';
-        }
-        
-        if (chart) {
-            const url = chart.toBase64Image();
-            const link = document.createElement('a');
-            link.download = filename;
-            link.href = url;
-            link.click();
-        }
-    };
-
-    // Auto-refresh low stock alerts
-    if (<?= $low_stock_count ?> > 0) {
-        // Show notification every 5 minutes for low stock
-        setInterval(function() {
-            if (Notification.permission === 'granted') {
-                new Notification('Inventory Alert', {
-                    body: '<?= $low_stock_count ?> produk memiliki stok rendah',
-                    icon: '<?= base_url("assets/static/images/logo/favicon.png") ?>'
-                });
+        // Stock Status Pie Chart
+        const statusCtx = document.getElementById('stockStatusChart').getContext('2d');
+        const stockStatusChart = new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: <?= json_encode($chart_data['stock_status_pie']['labels']) ?>,
+                datasets: [{
+                    data: <?= json_encode($chart_data['stock_status_pie']['data']) ?>,
+                    backgroundColor: <?= json_encode($chart_data['stock_status_pie']['colors']) ?>,
+                    borderWidth: 0,
+                    cutout: '70%' // ✅ pindah ke sini
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true
+                    }
+                }
             }
-        }, 300000); // 5 minutes
-    }
+        });
 
-    // Request notification permission
-    if ('Notification' in window && Notification.permission === 'default') {
-        Notification.requestPermission();
-    }
-});
+
+        // Real-time updates (every 30 seconds)
+        setInterval(function() {
+            updateDashboardStats();
+        }, 30000);
+
+        function updateDashboardStats() {
+            $.ajax({
+                url: '<?= base_url('/api/dashboard/stats') ?>',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    if (data.status) {
+                        $('#total-products').text(data.stats.total_products.toLocaleString());
+                        // Update other stats as needed
+                    }
+                },
+                error: function() {
+                    console.log('Failed to update dashboard stats');
+                }
+            });
+        }
+
+        // Export chart function
+        window.exportChart = function(type) {
+            let chart, filename;
+
+            if (type === 'movements') {
+                chart = stockMovementChart;
+                filename = 'stock-movements-chart.png';
+            } else if (type === 'status') {
+                chart = stockStatusChart;
+                filename = 'stock-status-chart.png';
+            }
+
+            if (chart) {
+                const url = chart.toBase64Image();
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = url;
+                link.click();
+            }
+        };
+
+        // Auto-refresh low stock alerts
+        if (<?= $low_stock_count ?> > 0) {
+            // Show notification every 5 minutes for low stock
+            setInterval(function() {
+                if (Notification.permission === 'granted') {
+                    new Notification('Inventory Alert', {
+                        body: '<?= $low_stock_count ?> produk memiliki stok rendah',
+                        icon: '<?= base_url("assets/static/images/logo/favicon.png") ?>'
+                    });
+                }
+            }, 300000); // 5 minutes
+        }
+
+        // Request notification permission
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+    });
 </script>
 <?= $this->endSection() ?>
 
 <?= $this->section('styles') ?>
 <style>
-/* Dashboard Custom Styles */
-.quick-stat h4 {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-}
-
-.btn-lg .d-block {
-    line-height: 1.2;
-}
-
-.btn-lg strong {
-    font-size: 1rem;
-}
-
-.btn-lg small {
-    font-size: 0.8rem;
-    opacity: 0.8;
-}
-
-.stock-legend {
-    text-align: center;
-}
-
-.legend-color {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    display: inline-block;
-    margin-bottom: 8px;
-}
-
-.avatar-content {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.rank-badge .badge {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    font-size: 1rem;
-    font-weight: bold;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
+    /* Dashboard Custom Styles */
     .quick-stat h4 {
-        font-size: 1.5rem;
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
     }
-    
-    .btn-lg {
-        padding: 0.75rem;
+
+    .btn-lg .d-block {
+        line-height: 1.2;
     }
-    
+
     .btn-lg strong {
-        font-size: 0.9rem;
+        font-size: 1rem;
     }
-    
+
     .btn-lg small {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
+        opacity: 0.8;
     }
-}
 
-/* Animation for cards */
-.card {
-    transition: transform 0.2s ease-in-out;
-}
+    .stock-legend {
+        text-align: center;
+    }
 
-.card:hover {
-    transform: translateY(-2px);
-}
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-bottom: 8px;
+    }
 
-/* Loading states */
-.loading-skeleton {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: loading 1.5s infinite;
-}
+    .avatar-content {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: bold;
+    }
 
-@keyframes loading {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}
+    .rank-badge .badge {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 1rem;
+        font-weight: bold;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .quick-stat h4 {
+            font-size: 1.5rem;
+        }
+
+        .btn-lg {
+            padding: 0.75rem;
+        }
+
+        .btn-lg strong {
+            font-size: 0.9rem;
+        }
+
+        .btn-lg small {
+            font-size: 0.75rem;
+        }
+    }
+
+    /* Animation for cards */
+    .card {
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Loading states */
+    .loading-skeleton {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+    }
+
+    @keyframes loading {
+        0% {
+            background-position: 200% 0;
+        }
+
+        100% {
+            background-position: -200% 0;
+        }
+    }
 </style>
 <?= $this->endSection() ?>

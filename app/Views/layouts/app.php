@@ -316,23 +316,23 @@
                 $('.alert').fadeOut('slow');
             }, 5000);
             
-            // Initialize all DataTables with default config
-            $('.datatable').each(function() {
-                if (!$.fn.DataTable.isDataTable(this)) {
-                    $(this).DataTable({
-                        responsive: true,
-                        language: {
-                            url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json'
-                        },
-                        pageLength: 25,
-                        lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Semua"]],
-                        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
-                        columnDefs: [
-                            { orderable: false, targets: 'no-sort' }
-                        ]
-                    });
-                }
-            });
+            // // Initialize all DataTables with default config
+            // $('.datatable').each(function() {
+            //     if (!$.fn.DataTable.isDataTable(this)) {
+            //         $(this).DataTable({
+            //             responsive: true,
+            //             language: {
+            //                 url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json'
+            //             },
+            //             pageLength: 25,
+            //             lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Semua"]],
+            //             dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
+            //             columnDefs: [
+            //                 { orderable: false, targets: 'no-sort' }
+            //             ]
+            //         });
+            //     }
+            // });
             
             // Initialize all tooltips
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

@@ -2,11 +2,9 @@
 
 namespace App\Controllers;
 
-use App\Controllers\BaseController;
-use App\Models\CategoryModel;
 use App\Models\ProductModel;
+use App\Models\CategoryModel;
 use App\Models\StockMovementModel;
-use CodeIgniter\HTTP\ResponseInterface;
 
 class ProductController extends BaseController
 {
@@ -21,32 +19,38 @@ class ProductController extends BaseController
         $this->stockMovementModel = new StockMovementModel();
     }
 
+    /**
+     * Display products list
+     */
     public function index()
     {
-        $this->setPageData('Produk', 'Manajemen Produk dan Stok');
+        $this->setPageData('Produk', 'Manajemen produk dan stok');
 
+        // Get search parameters
         $search = $this->request->getGet('search');
         $categoryFilter = $this->request->getGet('category');
         $stockFilter = $this->request->getGet('stock_status');
 
-        $builder = $this->productModel->select('
-                    product.*,
-                    categories.name as category_name,
-                    CASE
-                        WHEN products.current_stock = 0 THEN "out_of_stock"
-                        WHEN products.current_stock <= products.min_stock THEN "low_stock"
-                        ELSE "normal"
-                    END as stock_status
-                    ')
-            ->join('categories', 'categories_id = products.category_id')
+        // Build query
+        $builder = $this->productModel->select("
+                    products.*, 
+                categories.name as category_name,
+                CASE 
+                    WHEN products.current_stock = 0 THEN 'out_of_stock'
+                    WHEN products.current_stock <= products.min_stock THEN 'low_stock'
+                    ELSE 'normal'
+                END as stock_status
+            ")
+            ->join('categories', 'categories.id = products.category_id')
             ->where('products.is_active', true);
 
+        // Apply filters
         if ($search) {
             $builder->groupStart()
-                ->like('product.name', $search)
-                ->orLike('products.sku', $search)
-                ->orLike('products.description', $search)
-                ->groupEnd();
+                    ->like('products.name', $search)
+                    ->orLike('products.sku', $search)
+                    ->orLike('products.description', $search)
+                    ->groupEnd();
         }
 
         if ($categoryFilter) {
@@ -60,7 +64,7 @@ class ProductController extends BaseController
                     break;
                 case 'low_stock':
                     $builder->where('products.current_stock <=', 'products.min_stock', false)
-                        ->where('products.current_stock >', 0);
+                            ->where('products.current_stock >', 0);
                     break;
                 case 'normal':
                     $builder->where('products.current_stock >', 'products.min_stock', false);
@@ -70,10 +74,11 @@ class ProductController extends BaseController
 
         $products = $builder->orderBy('products.name', 'ASC')->findAll();
 
+        // Get categories for filter dropdown
         $categories = $this->categoryModel->getActiveCategories();
 
         $data = [
-            'product' => $products,
+            'products' => $products,
             'categories' => $categories,
             'search' => $search,
             'categoryFilter' => $categoryFilter,
@@ -84,9 +89,12 @@ class ProductController extends BaseController
         return $this->render('products/index', $data);
     }
 
+    /**
+     * Show create form
+     */
     public function create()
     {
-        $this->setPageData('Tambah Product', 'Buat Produk baru dengan detail lengkap.');
+        $this->setPageData('Tambah Produk', 'Buat produk baru dengan detail lengkap');
 
         $categories = $this->categoryModel->getActiveCategories();
 
@@ -101,15 +109,18 @@ class ProductController extends BaseController
                 'min_stock' => 10,
                 'current_stock' => 0,
                 'unit' => 'pcs',
-                'is_active' => true,
+                'is_active' => true
             ],
             'categories' => $categories,
-            'validation' => service('validation')
+            'validation' => \Config\Services::validation()
         ];
 
         return $this->render('products/create', $data);
     }
 
+    /**
+     * Store new product
+     */
     public function store()
     {
         $rules = [
