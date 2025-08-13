@@ -30,8 +30,12 @@ class Categories extends Migration
             ],
             'created_at' => [
                 'type' => 'TIMESTAMP',
-                'null' => true
+                'null' => true,
             ],
+            'updated_at' => [
+                'type' => 'TIMESTAMP',
+                'null' => true,
+            ]
         ]);
 
         $this->forge->addPrimaryKey('id');

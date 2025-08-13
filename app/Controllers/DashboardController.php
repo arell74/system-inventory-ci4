@@ -44,7 +44,7 @@ class DashboardController extends BaseController
         ]);
 
         //$this->render
-        return view('dashboard/index', $data);
+        return $this->render('dashboard/index', $data);
     }
 
     private function prepareChartData($movements)

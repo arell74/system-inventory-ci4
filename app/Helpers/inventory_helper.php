@@ -56,4 +56,5 @@ if (!function_exists('time_ago')) {
         if ($time < 31104000) return floor($time/2592000) . ' bulan yang lalu';
         return floor($time/31104000) . ' tahun yang lalu';
     }
+    
 }

@@ -74,4 +74,10 @@ abstract class BaseController extends Controller
     {
         return $this->response->setStatusCode($code)->setJSON($data);
     }
+
+    protected function render($view, $data = [])
+    {
+        $data = array_merge($this->data, $data);
+        return view($view, $data);
+    }
 }
