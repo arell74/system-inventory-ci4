@@ -56,3 +56,21 @@ $routes->group('api', function($routes) {
     $routes->get('products/search', 'Api\ProductController::search');
     $routes->get('categories/active', 'Api\CategoryController::getActive');
 });
+
+// Products API routes
+$routes->group('api/products', function($routes) {
+    $routes->get('search', 'Api\ProductController::search');
+    $routes->get('stock-status/(:num)', 'Api\ProductController::getStockStatus/$1');
+    $routes->get('by-category/(:num)', 'Api\ProductController::getByCategory/$1');
+});
+
+// Products export routes
+$routes->group('products', function($routes) {
+    // Existing CRUD routes...
+    $routes->get('export/excel', 'ProductController::exportExcel');
+    $routes->get('export/pdf', 'ProductController::exportPDF');
+    $routes->get('export/(:num)', 'ProductController::exportSingle/$1');
+});
+
+// Dashboard API for real-time updates
+$routes->get('api/dashboard/stats', 'Api\DashboardController::getStats');

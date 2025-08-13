@@ -390,4 +390,66 @@ class ProductController extends BaseController
             ], 500);
         }
     }
+    public function search()
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->jsonResponse(['error' => 'Invalid request'], 400);
+        }
+
+        $keyword = $this->request->getGet('q');
+        $limit = (int)$this->request->getGet('limit') ?: 10;
+
+        if (!$keyword || strlen($keyword) < 2) {
+            return $this->jsonResponse(['results' => []]);
+        }
+
+        $products = $this->productModel->searchProducts($keyword);
+        $results = [];
+
+        foreach (array_slice($products, 0, $limit) as $product) {
+            $results[] = [
+                'id' => $product['id'],
+                'text' => $product['name'] . ' (' . $product['sku'] . ')',
+                'name' => $product['name'],
+                'sku' => $product['sku'],
+                'category' => $product['category_name'],
+                'current_stock' => $product['current_stock'],
+                'price' => $product['price']
+            ];
+        }
+
+        return $this->jsonResponse(['results' => $results]);
+    }
+
+    public function getStockStatus($id)
+    {
+        if (!$this->request->isAJAX()) {
+            return $this->jsonResponse(['error' => 'Invalid request'], 400);
+        }
+
+        $product = $this->productModel->find($id);
+        
+        if (!$product) {
+            return $this->jsonResponse(['error' => 'Product not found'], 404);
+        }
+
+        $status = 'normal';
+        if ($product['current_stock'] == 0) {
+            $status = 'out_of_stock';
+        } elseif ($product['current_stock'] <= $product['min_stock']) {
+            $status = 'low_stock';
+        }
+
+        return $this->jsonResponse([
+            'product_id' => $product['id'],
+            'current_stock' => $product['current_stock'],
+            'min_stock' => $product['min_stock'],
+            'status' => $status,
+            'status_text' => [
+                'normal' => 'Stok Normal',
+                'low_stock' => 'Stok Rendah',
+                'out_of_stock' => 'Stok Habis'
+            ][$status]
+        ]);
+    }
 }
