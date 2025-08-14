@@ -39,7 +39,11 @@ $routes->group('stock', function($routes) {
     $routes->get('out', 'StockController::stockOut');
     $routes->post('out/store', 'StockController::storeStockOut');
     $routes->get('history', 'StockController::history');
-    $routes->get('history/product/(:num)', 'StockController::historyByProduct/$1');
+    $routes->get('history/export/(:alpha)', 'StockController::exportHistory/$1');
+    $routes->get('adjustment', 'StockController::adjustment');
+    $routes->post('adjustment/store', 'StockController::storeAdjustment');
+    $routes->get('alerts', 'StockController::alerts');
+    $routes->get('product/(:num)', 'StockController::getProductStock/$1');
 });
 
 //Reports
@@ -55,6 +59,10 @@ $routes->group('reports', function($routes) {
 $routes->group('api', function($routes) {
     $routes->get('products/search', 'Api\ProductController::search');
     $routes->get('categories/active', 'Api\CategoryController::getActive');
+    $routes->get('product/(:num)/info', 'Api\StockController::getProductInfo/$1');
+    $routes->get('alerts/count', 'Api\StockController::getAlertsCount');
+    $routes->post('bulk/in', 'Api\StockController::bulkStockIn');
+    $routes->post('bulk/out', 'Api\StockController::bulkStockOut');
 });
 
 // Products API routes
