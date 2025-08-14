@@ -26,7 +26,6 @@ class DashboardController extends BaseController
     {
         $this->setPageData('Dashboard', 'Ringkasan sistem inventory dan statistik real-time');
 
-        // Get main statistics
         $stats = [
             'total_products' => $this->productModel->where('is_active', true)->countAllResults(),
             'total_categories' => $this->categoryModel->where('is_active', true)->countAllResults(),

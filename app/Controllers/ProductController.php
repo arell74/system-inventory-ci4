@@ -310,11 +310,11 @@ class ProductController extends BaseController
             'is_active' => $this->request->getPost('is_active') ? true : false
         ];
 
-        if ($this->productModel->update($id, $data)) {
-            $this->setFlash('success', 'Produk berhasil diupdate');
+        if($this->productModel->update($id, $data)) {
+            $this->setFlash('success', 'Product Berhasil Diupdate!');
             return redirect()->to('/products');
         } else {
-            $this->setFlash('error', 'Gagal mengupdate produk');
+            $this->setFlash('error', 'Gagal Mengupdate data Produk');
             return redirect()->back()->withInput();
         }
     }
