@@ -52,6 +52,7 @@ $routes->group('reports', function($routes) {
     $routes->get('movements', 'ReportController::movements');
     $routes->get('export/stock', 'ReportController::exportStock');
     $routes->get('export/movements', 'ReportController::exportMovements');
+    $routes->get('analytics', 'ReportController::analytics');
 });
 
 
