@@ -1,68 +1,85 @@
-# CodeIgniter 4 Application Starter
+## 📦 Sistem Inventory dengan CodeIgniter 4
+<img src="https://img.shields.io/badge/CodeIgniter-4.x-red">
+<img src="https://img.shields.io/badge/PHP-%253E%253D7.4-blue">
+<img src="https://img.shields.io/badge/License-MIT-green">
 
-## What is CodeIgniter?
+**Sistem Inventory** adalah aplikasi manajemen stok berbasis web yang dibangun dengan framework CodeIgniter 4 untuk membantu Anda mengelola produk, kategori, supplier, dan transaksi inventory dengan mudah.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+---
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+### ✨ Fitur Utama
+- **🏷️ Manajemen Produk & Kategori**
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+- 📊 **Laporan Stok Real-time**
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+- 🔄 **Sistem Transaksi Masuk/Keluar**
 
-## Installation & updates
+- 👥 **Manajemen Supplier**
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+- 🔐 **Sistem Autentikasi Pengguna**
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+- 📈 **Dashboard Analitik**
 
-## Setup
+- 📱 **Responsive Design**
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+### 🚀 Persyaratan Sistem
+- **PHP** versi `8.1` atau lebih tinggi.
+- **Composer** untuk manajemen dependensi PHP.
+- **Web Server** (Apache, Nginx, dll).
+- **Database** (MySQL, PostgreSQL, dll).
 
-## Important Change with index.php
+> Pastikan ekstensi PHP berikut aktif:
+> - `intl`
+> - `mbstring`
+> - `json`
+> - `mysqlnd` *(jika menggunakan MySQL)*
+> - `libcurl`
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+---
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+### 🛠️ Instalasi
+Ikuti langkah-langkah berikut untuk menjalankan aplikasi di lokal:
 
-**Please** read the user guide for a better explanation of how CI4 works!
+### 1️⃣ Mengkloning Repositori
+```bash
+git clone https://github.com/USERNAME/aplikasi-presensi-ci4.git
+cd aplikasi-presensi-ci4
+```
+### 2️⃣ Instalasi Dependensi
+```bash
+- composer install
+```
 
-## Repository Management
+### 3️⃣ Konfigurasi Lingkungan
+```bash
+buka file .env dan atur konfigurasi:
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+# APP
+app.baseURL = 'http://localhost:8080'
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+# DATABASE
+database.default.hostname = localhost
+database.default.database = presensi_db
+database.default.username = root
+database.default.password =
+database.default.DBDriver = MySQLi
+```
+### 4️⃣ Migrasi & Seeder Database
+```bash
+php spark migrate
+php spark db:seed DatabaseSeeder
+```
 
-## Server Requirements
+### 5️⃣ Menjalankan Server
+```bash
+php spark serve
+```
 
-PHP version 8.1 or higher is required, with the following extensions installed:
+### 📸 Screenshot
+- **Tampilan Dashboard**
+<img src="public/img/dashboard.png">
+<img src="public/img/dashboard2.png">
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+- **Tampilan Halaman Kategori**
+<img src="public/img/kategori.png">
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> - The end of life date for PHP 8.1 will be December 31, 2025.
-
-Additionally, make sure that the following extensions are enabled in your PHP:
-
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
