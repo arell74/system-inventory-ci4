@@ -2,9 +2,13 @@
 
 namespace App\Controllers;
 
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use App\Models\ProductModel;
 use App\Models\CategoryModel;
 use App\Models\StockMovementModel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ProductController extends BaseController
 {
@@ -47,10 +51,10 @@ class ProductController extends BaseController
         // Apply filters
         if ($search) {
             $builder->groupStart()
-                    ->like('products.name', $search)
-                    ->orLike('products.sku', $search)
-                    ->orLike('products.description', $search)
-                    ->groupEnd();
+                ->like('products.name', $search)
+                ->orLike('products.sku', $search)
+                ->orLike('products.description', $search)
+                ->groupEnd();
         }
 
         if ($categoryFilter) {
@@ -64,7 +68,7 @@ class ProductController extends BaseController
                     break;
                 case 'low_stock':
                     $builder->where('products.current_stock <=', 'products.min_stock', false)
-                            ->where('products.current_stock >', 0);
+                        ->where('products.current_stock >', 0);
                     break;
                 case 'normal':
                     $builder->where('products.current_stock >', 'products.min_stock', false);
@@ -196,7 +200,7 @@ class ProductController extends BaseController
     public function show($id)
     {
         $product = $this->productModel->getProductWithCategory($id);
-        
+
         if (!$product) {
             $this->setFlash('error', 'Produk tidak ditemukan');
             return redirect()->to('/products');
@@ -210,13 +214,13 @@ class ProductController extends BaseController
         // Calculate stock statistics
         $stockStats = [
             'total_in' => $this->stockMovementModel->where('product_id', $id)
-                                                   ->where('type', 'IN')
-                                                   ->selectSum('quantity', 'total')
-                                                   ->first()['total'] ?? 0,
+                ->where('type', 'IN')
+                ->selectSum('quantity', 'total')
+                ->first()['total'] ?? 0,
             'total_out' => $this->stockMovementModel->where('product_id', $id)
-                                                    ->where('type', 'OUT')
-                                                    ->selectSum('quantity', 'total')
-                                                    ->first()['total'] ?? 0
+                ->where('type', 'OUT')
+                ->selectSum('quantity', 'total')
+                ->first()['total'] ?? 0
         ];
 
         $data = [
@@ -234,7 +238,7 @@ class ProductController extends BaseController
     public function edit($id)
     {
         $product = $this->productModel->find($id);
-        
+
         if (!$product) {
             $this->setFlash('error', 'Produk tidak ditemukan');
             return redirect()->to('/products');
@@ -259,7 +263,7 @@ class ProductController extends BaseController
     public function update($id)
     {
         $product = $this->productModel->find($id);
-        
+
         if (!$product) {
             $this->setFlash('error', 'Produk tidak ditemukan');
             return redirect()->to('/products');
@@ -310,7 +314,7 @@ class ProductController extends BaseController
             'is_active' => $this->request->getPost('is_active') ? true : false
         ];
 
-        if($this->productModel->update($id, $data)) {
+        if ($this->productModel->update($id, $data)) {
             $this->setFlash('success', 'Product Berhasil Diupdate!');
             return redirect()->to('/products');
         } else {
@@ -329,29 +333,29 @@ class ProductController extends BaseController
         }
 
         $product = $this->productModel->find($id);
-        
+
         if (!$product) {
             return $this->jsonResponse(['status' => false, 'message' => 'Produk tidak ditemukan'], 404);
         }
 
         // Check if product has stock movements
         $hasMovements = $this->stockMovementModel->where('product_id', $id)->countAllResults() > 0;
-        
+
         if ($hasMovements) {
             return $this->jsonResponse([
-                'status' => false, 
+                'status' => false,
                 'message' => 'Produk tidak bisa dihapus karena memiliki riwayat pergerakan stok'
             ], 400);
         }
 
         if ($this->productModel->delete($id)) {
             return $this->jsonResponse([
-                'status' => true, 
+                'status' => true,
                 'message' => 'Produk berhasil dihapus'
             ]);
         } else {
             return $this->jsonResponse([
-                'status' => false, 
+                'status' => false,
                 'message' => 'Gagal menghapus produk'
             ], 500);
         }
@@ -371,7 +375,7 @@ class ProductController extends BaseController
 
         if (!$categoryId || !$productName) {
             return $this->jsonResponse([
-                'status' => false, 
+                'status' => false,
                 'message' => 'Category ID dan nama produk diperlukan'
             ], 400);
         }
@@ -380,12 +384,12 @@ class ProductController extends BaseController
 
         if ($sku) {
             return $this->jsonResponse([
-                'status' => true, 
+                'status' => true,
                 'sku' => $sku
             ]);
         } else {
             return $this->jsonResponse([
-                'status' => false, 
+                'status' => false,
                 'message' => 'Gagal generate SKU'
             ], 500);
         }
@@ -428,7 +432,7 @@ class ProductController extends BaseController
         }
 
         $product = $this->productModel->find($id);
-        
+
         if (!$product) {
             return $this->jsonResponse(['error' => 'Product not found'], 404);
         }
@@ -451,5 +455,175 @@ class ProductController extends BaseController
                 'out_of_stock' => 'Stok Habis'
             ][$status]
         ]);
+    }
+
+    /**
+     * Export products to Excel
+     */
+    public function exportExcel()
+    {
+        // Get all active products with category and stock status
+        $products = $this->productModel->select("
+            products.*, 
+            categories.name as category_name,
+            CASE 
+                WHEN products.current_stock = 0 THEN 'out_of_stock'
+                WHEN products.current_stock <= products.min_stock THEN 'low_stock'
+                ELSE 'normal'
+            END as stock_status
+        ")
+            ->join('categories', 'categories.id = products.category_id')
+            ->where('products.is_active', true)
+            ->orderBy('products.name', 'ASC')
+            ->findAll();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Set headers
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Nama Produk');
+        $sheet->setCellValue('C1', 'Kategori');
+        $sheet->setCellValue('D1', 'SKU');
+        $sheet->setCellValue('E1', 'Stok');
+        $sheet->setCellValue('F1', 'Stok Minimum');
+        $sheet->setCellValue('G1', 'Status Stok');
+        $sheet->setCellValue('H1', 'Harga');
+        $sheet->setCellValue('I1', 'HPP');
+        $sheet->setCellValue('J1', 'Unit');
+        $sheet->setCellValue('K1', 'Tanggal Dibuat');
+
+        // Style for headers
+        $sheet->getStyle('A1:K1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:K1')->getAlignment()->setHorizontal('center');
+
+        // Populate data
+        $row = 2;
+        foreach ($products as $index => $product) {
+            $sheet->setCellValue('A' . $row, $index + 1);
+            $sheet->setCellValue('B' . $row, $product['name']);
+            $sheet->setCellValue('C' . $row, $product['category_name']);
+            $sheet->setCellValue('D' . $row, $product['sku']);
+            $sheet->setCellValue('E' . $row, $product['current_stock']);
+            $sheet->setCellValue('F' . $row, $product['min_stock']);
+
+            // Set stock status with conditional formatting
+            $status = '';
+            if ($product['stock_status'] == 'out_of_stock') {
+                $status = 'Stok Habis';
+            } elseif ($product['stock_status'] == 'low_stock') {
+                $status = 'Stok Rendah';
+            } else {
+                $status = 'Stok Normal';
+            }
+            $sheet->setCellValue('G' . $row, $status);
+
+            $sheet->setCellValue('H' . $row, $product['price']);
+            $sheet->setCellValue('I' . $row, $product['cost_price']);
+            $sheet->setCellValue('J' . $row, $product['unit']);
+            $sheet->setCellValue('K' . $row, date('d/m/Y', strtotime($product['created_at'])));
+
+            $row++;
+        }
+
+        // Auto size columns
+        foreach (range('A', 'K') as $column) {
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
+
+        // Set filename and headers
+        $filename = 'daftar_produk_' . date('Ymd_His') . '.xlsx';
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+        exit;
+    }
+
+    /**
+     * Export products to PDF
+     */
+    public function exportPdf()
+    {
+        // Get all active products with category and stock status
+        $products = $this->productModel->select("
+            products.*, 
+            categories.name as category_name,
+            CASE 
+                WHEN products.current_stock = 0 THEN 'out_of_stock'
+                WHEN products.current_stock <= products.min_stock THEN 'low_stock'
+                ELSE 'normal'
+            END as stock_status
+        ")
+            ->join('categories', 'categories.id = products.category_id')
+            ->where('products.is_active', true)
+            ->orderBy('products.name', 'ASC')
+            ->findAll();
+
+        // Prepare HTML content
+        $html = '<h2 style="text-align: center;">Daftar Produk</h2>';
+        $html .= '<p style="text-align: center;">Tanggal Export: ' . date('d/m/Y H:i') . '</p>';
+
+        $html .= '<table border="1" cellpadding="5" width="100%" style="border-collapse: collapse;">';
+        $html .= '<thead>';
+        $html .= '<tr>';
+        $html .= '<th width="5%">No</th>';
+        $html .= '<th width="25%">Nama Produk</th>';
+        $html .= '<th width="15%">Kategori</th>';
+        $html .= '<th width="10%">SKU</th>';
+        $html .= '<th width="10%">Stok</th>';
+        $html .= '<th width="10%">Status</th>';
+        $html .= '<th width="15%">Harga</th>';
+        $html .= '<th width="10%">Unit</th>';
+        $html .= '</tr>';
+        $html .= '</thead>';
+        $html .= '<tbody>';
+
+        foreach ($products as $index => $product) {
+            $status = '';
+            $statusColor = '';
+
+            if ($product['stock_status'] == 'out_of_stock') {
+                $status = 'Stok Habis';
+                $statusColor = 'color: red;';
+            } elseif ($product['stock_status'] == 'low_stock') {
+                $status = 'Stok Rendah';
+                $statusColor = 'color: orange;';
+            } else {
+                $status = 'Stok Normal';
+                $statusColor = 'color: green;';
+            }
+
+            $html .= '<tr>';
+            $html .= '<td>' . ($index + 1) . '</td>';
+            $html .= '<td>' . $product['name'] . '</td>';
+            $html .= '<td>' . $product['category_name'] . '</td>';
+            $html .= '<td>' . $product['sku'] . '</td>';
+            $html .= '<td>' . number_format($product['current_stock']) . '</td>';
+            $html .= '<td style="' . $statusColor . '">' . $status . '</td>';
+            $html .= '<td>' . format_currency($product['price']) . '</td>';
+            $html .= '<td>' . $product['unit'] . '</td>';
+            $html .= '</tr>';
+        }
+
+        $html .= '</tbody>';
+        $html .= '</table>';
+
+        // Setup dompdf
+        $options = new Options();
+        $options->set('isRemoteEnabled', true);
+        $options->set('defaultFont', 'Arial');
+
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->render();
+
+        // Output the generated PDF
+        $filename = 'daftar_produk_' . date('Ymd_His') . '.pdf';
+        $dompdf->stream($filename, array("Attachment" => true));
+        exit;
     }
 }
